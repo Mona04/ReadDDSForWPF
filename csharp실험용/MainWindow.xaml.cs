@@ -28,7 +28,7 @@ namespace csharp실험용
             InitializeComponent();
 
             var image = new DDSImage.DDSImage();
-            var bmp = image.Load("../../../SampleTex/Bump00.dds");
+            var bmp = image.Load("../../../SampleTex/heightMap01.DDS");
             MyImage.Source = bmp;
         }
     }

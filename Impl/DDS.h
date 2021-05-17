@@ -13,17 +13,17 @@ public:
 
 private:
 	void UpdateSetting(const DirectX::TexMetadata& data);
-	bool NeedConvert(const DirectX::TexMetadata& data);
-	DXGI_FORMAT GetConvertFormat();
+	// return 0 if no process needed, 1 need decompress, 2 need rgba->bgra
+	int NeedConvert(const DirectX::TexMetadata& data);
 	const DirectX::Image* GetImage(DirectX::ScratchImage* image);
 
 public:
+	DXGI_FORMAT format;
 	int width = 0;
 	int height = 0;
 	int depth = 0;
 	int channel = 0; // chanel per pixel
 	int bpc = 0;
-	int array_size = 0;
 	int mip_level = 0;
 	uint8_t* data = nullptr;
 

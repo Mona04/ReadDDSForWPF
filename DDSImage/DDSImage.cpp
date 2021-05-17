@@ -14,8 +14,9 @@ DDSImage::DDSImage::~DDSImage()
 
 BitmapSource^ DDSImage::DDSImage::Load(System::String^ path)
 {
-	bool r = _impl->LoadTexture(marshal_as<std::wstring>(path));
-	
+    if (_impl->LoadTexture(marshal_as<std::wstring>(path)) == false) 
+        return nullptr;
+
     PixelFormat format;
     switch (_impl->channel) {
     case 1: 

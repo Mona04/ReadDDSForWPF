@@ -28,15 +28,18 @@ bool DDSTexture::LoadTexture(std::wstring_view path)
     if (FAILED(hr))
         return false;
 
-    if (NeedConvert(image->GetMetadata())) {
+    auto need_convert = NeedConvert(image->GetMetadata());
+    if (need_convert) {
         DirectX::ScratchImage* tmp = new DirectX::ScratchImage();
-        hr = DirectX::Decompress(*GetImage(image), DXGI_FORMAT_B8G8R8A8_UNORM, *tmp);
+        hr = need_convert == 1 ?
+            DirectX::Decompress(*GetImage(image), DXGI_FORMAT_B8G8R8A8_UNORM, *tmp) :
+            DirectX::Convert(*GetImage(image), DXGI_FORMAT_B8G8R8A8_UNORM, DirectX::TEX_FILTER_DEFAULT, 0.f, *tmp);
         std::swap(tmp, image);
         delete tmp;
         if (FAILED(hr))
             return false;
     }
-	
+
 	UpdateSetting(image->GetMetadata());	
 	data = image->GetPixels();
 
@@ -48,11 +51,10 @@ void DDSTexture::UpdateSetting(const DirectX::TexMetadata& meta)
 	height = meta.height;
 	width = meta.width;
 	depth = meta.depth;
-	array_size = meta.arraySize;
 	mip_level = meta.mipLevels;
+	format = meta.format;
 
-	auto tex_format = meta.format;
-	switch (tex_format)
+	switch (format)
 	{
     case DXGI_FORMAT_R32G32B32A32_TYPELESS:
     case DXGI_FORMAT_R32G32B32A32_FLOAT:
@@ -141,8 +143,9 @@ void DDSTexture::UpdateSetting(const DirectX::TexMetadata& meta)
 	}
 }
 
-bool DDSTexture::NeedConvert(const DirectX::TexMetadata& data)
+int DDSTexture::NeedConvert(const DirectX::TexMetadata& data)
 {
+    //format = data.format;
     switch (data.format)
     {
     case DXGI_FORMAT_BC1_TYPELESS:
@@ -159,13 +162,13 @@ bool DDSTexture::NeedConvert(const DirectX::TexMetadata& data)
     case DXGI_FORMAT_BC4_SNORM:
     case DXGI_FORMAT_BC5_TYPELESS:
     case DXGI_FORMAT_BC5_UNORM:
-    case DXGI_FORMAT_BC5_SNORM:
+    case DXGI_FORMAT_BC5_SNORM:         return 1;
     case DXGI_FORMAT_R8G8B8A8_TYPELESS:
     case DXGI_FORMAT_R8G8B8A8_UNORM:
     case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
     case DXGI_FORMAT_R8G8B8A8_UINT:
     case DXGI_FORMAT_R8G8B8A8_SNORM:
-    case DXGI_FORMAT_R8G8B8A8_SINT:     return true;
+    case DXGI_FORMAT_R8G8B8A8_SINT:     return 2;
     }
     return false;
 }
