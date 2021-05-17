@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using DDSImage;
 
 namespace csharp실험용
 {
@@ -26,11 +27,9 @@ namespace csharp실험용
         {
             InitializeComponent();
 
-            var image = new DDSImage();
-            var bmp = image.Load("C:/Users/dh045/Desktop/Chimera/_Assets/Texture/Effect/Decal/Decal.dds");
+            var image = new DDSImage.DDSImage();
+            var bmp = image.Load("../../../SampleTex/Decal.dds");
             MyImage.Source = bmp;
-            //DevIL.DevIL.LoadBitmap(@"C:\Users\dh045\Desktop\Chimera\_Assets\Texture\Brush\Circle.dds");
-
         }
     }
 }

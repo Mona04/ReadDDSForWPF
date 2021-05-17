@@ -2,17 +2,17 @@
 
 typedef unsigned int uint;
 
-DDSImage::DDSImage()
+DDSImage::DDSImage::DDSImage()
 {
 	_impl = new DDSTexture();
 }
 
-DDSImage::~DDSImage()
+DDSImage::DDSImage::~DDSImage()
 {
 	delete _impl;
 }
 
-BitmapSource^ DDSImage::Load(System::String^ path)
+BitmapSource^ DDSImage::DDSImage::Load(System::String^ path)
 {
 	bool r = _impl->LoadTexture(marshal_as<std::wstring>(path));
 	
