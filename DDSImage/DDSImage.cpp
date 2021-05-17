@@ -18,9 +18,23 @@ BitmapSource^ DDSImage::DDSImage::Load(System::String^ path)
 	
     PixelFormat format;
     switch (_impl->channel) {
-    case 1: format = PixelFormats::Gray8; break;
+    case 1: 
+        switch (_impl->bpc) {
+        case 8:  format = PixelFormats::Gray8; break;
+        case 16: format = PixelFormats::Gray16; break;
+        case 32: format = PixelFormats::Gray32Float; break;
+        } break;
     case 3: format = PixelFormats::Bgr32; break;
-    case 4: format = PixelFormats::Bgra32; break;
+        switch (_impl->bpc) {
+        case 8:  format = PixelFormats::Bgr32; break;
+        case 16: format = PixelFormats::Rgb48; break;
+        } break;
+    case 4:
+        switch (_impl->bpc) {
+        case 8:  format = PixelFormats::Bgra32; break;
+        case 16: format = PixelFormats::Rgba64; break;
+        case 32: format = PixelFormats::Rgba128Float; break;
+        } break;
     }
     
     WriteableBitmap^ wbm = gcnew WriteableBitmap(_impl->width, _impl->height, 96, 96, format, nullptr);

@@ -24,7 +24,7 @@ bool DDSTexture::LoadTexture(std::wstring_view path)
         return false;
 
     auto hr = DirectX::LoadFromDDSFile(path.data(),
-        DirectX::DDS_FLAGS::DDS_FLAGS_FORCE_RGB, nullptr, *image);
+        DirectX::DDS_FLAGS::DDS_FLAGS_NONE, nullptr, *image);
     if (FAILED(hr))
         return false;
 
@@ -61,7 +61,7 @@ void DDSTexture::UpdateSetting(const DirectX::TexMetadata& meta)
     case DXGI_FORMAT_R32G32B32_TYPELESS:          
     case DXGI_FORMAT_R32G32B32_FLOAT:             
     case DXGI_FORMAT_R32G32B32_UINT:              
-    case DXGI_FORMAT_R32G32B32_SINT:              bpc = 32; channel = 4;  break;
+    case DXGI_FORMAT_R32G32B32_SINT:              bpc = 32; channel = 3;  break;
     case DXGI_FORMAT_R16G16B16A16_TYPELESS:       
     case DXGI_FORMAT_R16G16B16A16_FLOAT:          
     case DXGI_FORMAT_R16G16B16A16_UNORM:          
@@ -145,15 +145,29 @@ bool DDSTexture::NeedConvert(const DirectX::TexMetadata& data)
 {
     switch (data.format)
     {
-    case DXGI_FORMAT_B8G8R8A8_UNORM:
-    case DXGI_FORMAT_B8G8R8X8_UNORM:             
-    case DXGI_FORMAT_B8G8R8A8_TYPELESS:
-    case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
-    case DXGI_FORMAT_B8G8R8X8_TYPELESS:
-    case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:        return false;
+    case DXGI_FORMAT_BC1_TYPELESS:
+    case DXGI_FORMAT_BC1_UNORM:
+    case DXGI_FORMAT_BC1_UNORM_SRGB:
+    case DXGI_FORMAT_BC2_TYPELESS:
+    case DXGI_FORMAT_BC2_UNORM:
+    case DXGI_FORMAT_BC2_UNORM_SRGB:
+    case DXGI_FORMAT_BC3_TYPELESS:
+    case DXGI_FORMAT_BC3_UNORM:
+    case DXGI_FORMAT_BC3_UNORM_SRGB:
+    case DXGI_FORMAT_BC4_TYPELESS:
+    case DXGI_FORMAT_BC4_UNORM:
+    case DXGI_FORMAT_BC4_SNORM:
+    case DXGI_FORMAT_BC5_TYPELESS:
+    case DXGI_FORMAT_BC5_UNORM:
+    case DXGI_FORMAT_BC5_SNORM:
+    case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+    case DXGI_FORMAT_R8G8B8A8_UNORM:
+    case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+    case DXGI_FORMAT_R8G8B8A8_UINT:
+    case DXGI_FORMAT_R8G8B8A8_SNORM:
+    case DXGI_FORMAT_R8G8B8A8_SINT:     return true;
     }
-
-    return true;
+    return false;
 }
 
 const DirectX::Image* DDSTexture::GetImage(DirectX::ScratchImage* image)

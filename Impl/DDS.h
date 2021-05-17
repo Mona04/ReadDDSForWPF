@@ -14,6 +14,7 @@ public:
 private:
 	void UpdateSetting(const DirectX::TexMetadata& data);
 	bool NeedConvert(const DirectX::TexMetadata& data);
+	DXGI_FORMAT GetConvertFormat();
 	const DirectX::Image* GetImage(DirectX::ScratchImage* image);
 
 public:
@@ -27,9 +28,8 @@ public:
 	uint8_t* data = nullptr;
 
 	int selected_mip_level = 0;
+	static int max_extract_mip_level;  // for memory saving set value bigger than 1;
 
 private:
 	DirectX::ScratchImage* image = nullptr;
-
-	static int max_extract_mip_level;  // for memory saving set value bigger than 1;
 };
