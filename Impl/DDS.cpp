@@ -176,6 +176,6 @@ int DDSTexture::NeedConvert(const DirectX::TexMetadata& data)
 const DirectX::Image* DDSTexture::GetImage(DirectX::ScratchImage* image)
 {
 	int n_image = image->GetImageCount();
-	selected_mip_level = std::min<int>(max_extract_mip_level, image->GetMetadata().mipLevels);
+	selected_mip_level = std::min<int>(max_extract_mip_level, image->GetMetadata().mipLevels-1);
 	return image->GetImage(selected_mip_level, 0, 0);
 }
