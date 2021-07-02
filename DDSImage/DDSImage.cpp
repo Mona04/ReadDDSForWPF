@@ -48,3 +48,10 @@ BitmapSource^ DDSImage::DDSImage::Load(System::String^ path)
 
     return wbm;
 }
+
+bool DDSImage::DDSImage::IsSupported(System::String^ path)
+{
+    auto extension = path->ToLower();
+    return extension == ".dds" || extension == "dds" || extension == ".tga" || extension == "tga";
+}
+
