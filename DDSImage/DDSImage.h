@@ -15,7 +15,8 @@ namespace DDSImage {
 		~DDSImage();
 
 		BitmapSource^ Load(System::String^ path);
-
+		bool IsSupported(System::String^ path);
+		
 	private:
 		DDSTexture* _impl = nullptr;
 	};
