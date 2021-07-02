@@ -4,7 +4,7 @@
 #include <string>
 #include <algorithm>
 
-int DDSTexture::max_extract_mip_level = 3;
+int DDSTexture::max_extract_mip_level = 4;
 
 DDSTexture::DDSTexture()
 {
@@ -13,35 +13,69 @@ DDSTexture::DDSTexture()
 
 DDSTexture::~DDSTexture()
 {
-	delete image;
+    if(image) delete image;
 }
 
 bool DDSTexture::LoadTexture(std::wstring_view path)
 {
     if (FileSystem::IsExistFile(path) == false)
         return false;
-    if (FileSystem::GetExtension(path) != L"dds")
+    auto extension = FileSystem::GetExtension(path);
+    if (extension == L"dds")
+    {
+        auto hr = DirectX::LoadFromDDSFile(path.data(),
+            DirectX::DDS_FLAGS::DDS_FLAGS_NONE, nullptr, *image);
+        if (FAILED(hr))
+            return false;
+    }
+    else if (extension == L"tga")
+    {
+        auto hr = DirectX::LoadFromTGAFile(path.data(),
+            DirectX::TGA_FLAGS::TGA_FLAGS_NONE,
+            nullptr, *image);
+        if (FAILED(hr))
+            return false;
+    }
+    else
         return false;
-
-    auto hr = DirectX::LoadFromDDSFile(path.data(),
-        DirectX::DDS_FLAGS::DDS_FLAGS_NONE, nullptr, *image);
-    if (FAILED(hr))
+    
+    // resize
+ 
+    DirectX::ScratchImage* tmp = new DirectX::ScratchImage();
+    auto hr = DirectX::Resize(*GetImage(image), 64, 64, DirectX::TEX_FILTER_DEFAULT, *tmp);
+    if (FAILED(hr)) {
+        delete tmp; tmp = nullptr;
+        delete image; image = nullptr;
         return false;
-
+    }
+    std::swap(tmp, image);
+    delete tmp;
+ 
+    // format convert
     auto need_convert = NeedConvert(image->GetMetadata());
     if (need_convert) {
         DirectX::ScratchImage* tmp = new DirectX::ScratchImage();
-        hr = need_convert == 1 ?
+        auto hr = need_convert == 1 ?
             DirectX::Decompress(*GetImage(image), DXGI_FORMAT_B8G8R8A8_UNORM, *tmp) :
             DirectX::Convert(*GetImage(image), DXGI_FORMAT_B8G8R8A8_UNORM, DirectX::TEX_FILTER_DEFAULT, 0.f, *tmp);
+        if (FAILED(hr)) {
+            delete tmp; tmp = nullptr;
+            delete image; image = nullptr;
+            return false;
+        }
         std::swap(tmp, image);
         delete tmp;
-        if (FAILED(hr))
-            return false;
     }
 
 	UpdateSetting(image->GetMetadata());	
 	data = image->GetPixels();
+
+    // make tga opaque
+    if (extension == L"tga")
+    {
+        for (int i = channel - 1; i < width * height * channel; i += channel)
+            data[i] = 255;
+    }
 
 	return true;
 }
