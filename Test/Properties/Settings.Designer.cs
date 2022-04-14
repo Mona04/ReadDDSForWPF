@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace csharp실험용.Properties
+namespace Test.Properties
 {
 
 

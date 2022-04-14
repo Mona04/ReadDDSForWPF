@@ -14,7 +14,9 @@ namespace DDSImage {
 		DDSImage();
 		~DDSImage();
 
-		BitmapSource^ Load(System::String^ path);
+		// if one of width and height is -1, resize using other value with original widht/height ratio.
+		// But all of width and height is -1, a exception is thrown.
+		BitmapSource^ Load(System::String^ path, int width, int height);
 		static bool IsSupported(System::String^ path);
 		
 	private:

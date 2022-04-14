@@ -1,5 +1,6 @@
 #include "DDSImage.h"
 
+using namespace System;
 typedef unsigned int uint;
 
 DDSImage::DDSImage::DDSImage()
@@ -12,10 +13,12 @@ DDSImage::DDSImage::~DDSImage()
 	delete _impl;
 }
 
-BitmapSource^ DDSImage::DDSImage::Load(System::String^ path)
+BitmapSource^ DDSImage::DDSImage::Load(System::String^ path, int width, int height)
 {
-    if (_impl->LoadTexture(marshal_as<std::wstring>(path)) == false) 
-        return nullptr;
+    if (width < 1 && height < 1)
+        throw gcnew ApplicationException(System::String::Format("Invalid Input w = {0}, h = {1}", width, height));
+    if (_impl->LoadTexture(marshal_as<std::wstring>(path), width, height) == false) 
+        throw gcnew ApplicationException(System::String::Format("Failed to Load Texture"));
 
     PixelFormat format;
     switch (_impl->channel) {
@@ -38,8 +41,8 @@ BitmapSource^ DDSImage::DDSImage::Load(System::String^ path)
         } break;
     }
     
-    WriteableBitmap^ wbm = gcnew WriteableBitmap(_impl->width, _impl->height, 96, 96, format, nullptr);
-    CopyMemory(wbm->BackBuffer.ToPointer(), _impl->data, (uint)(_impl->width * _impl->height * _impl->channel));
+    WriteableBitmap^ wbm = gcnew WriteableBitmap(_impl->width, _impl->height, width, height, format, nullptr);
+    CopyMemory(wbm->BackBuffer.ToPointer(), _impl->data, (uint)(_impl->width * _impl->height * _impl->mem_channel));
     auto k = ((int*)(wbm->BackBuffer.ToPointer()))[0];
 
     wbm->Lock();

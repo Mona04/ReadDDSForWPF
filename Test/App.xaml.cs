@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace csharp실험용
+namespace Test
 {
     /// <summary>
     /// Interaction logic for App.xaml

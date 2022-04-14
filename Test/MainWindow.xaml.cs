@@ -12,11 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Drawing;
-using System.Runtime.InteropServices;
 using DDSImage;
 
-namespace csharp실험용
+namespace Test
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -28,7 +26,7 @@ namespace csharp실험용
             InitializeComponent();
 
             var image = new DDSImage.DDSImage();
-            var bmp = image.Load("../../../SampleTex/heightMap01.DDS");
+            var bmp = image.Load("../../../SampleTex/Sample.dds", 50, -1);
             MyImage.Source = bmp;
         }
     }
