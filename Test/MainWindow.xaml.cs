@@ -27,6 +27,7 @@ namespace Test
 
             var image = new DDSImage.DDSImage();
             var bmp = image.Load("../../../SampleTex/Sample.dds", 50, -1);
+            //var bmp = image.Load("../../../SampleTex/Dist.dds", 50, -1);
             MyImage.Source = bmp;
         }
     }

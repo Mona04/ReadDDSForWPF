@@ -40,7 +40,8 @@ bool DDSTexture::LoadTexture(std::wstring_view path, int dst_width, int dst_heig
         if (FAILED(hr))
             return false;
     }
-    else   return false;
+    else  
+        return false;
     
     // resize
     int width_cache = dst_width, height_cache = dst_height;
