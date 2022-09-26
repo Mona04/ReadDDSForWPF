@@ -22,13 +22,14 @@ BitmapSource^ DDSImage::DDSImage::Load(System::String^ path, int width, int heig
 
     PixelFormat format;
     switch (_impl->channel) {
+    case 0: 
+    case 2: return nullptr;
     case 1: 
         switch (_impl->bpc) {
         case 8:  format = PixelFormats::Gray8; break;
         case 16: format = PixelFormats::Gray16; break;
         case 32: format = PixelFormats::Gray32Float; break;
         } break;
-    case 2: return nullptr;
     case 3: format = PixelFormats::Bgr32; break;
         switch (_impl->bpc) {
         case 8:  format = PixelFormats::Bgr32; break;
